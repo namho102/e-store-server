@@ -16,7 +16,8 @@ server.app.db = mongojs('mongodb://heroku_pnc1crsd:i3rtrdok3604bn79t7uimr9hn6@ds
 
 //Load plugins and start server
 server.register([
-    require('./routes/products')
+    require('./routes/products'),
+    require('./routes/users')
 ], (err) => {
 
     if (err) {
