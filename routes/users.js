@@ -25,6 +25,36 @@ exports.register = function (server, options, next) {
     });
 
 
+    server.route({
+        method: 'POST',
+        path: '/authenticate',
+        handler: function (request, reply) {
+          db.users.findOne({
+            username: request.payload.name,
+          }, (err, user) => {
+
+              if (err) {
+                  return reply(Boom.wrap(err, 'Internal MongoDB error'));
+              }
+
+              if(!user) {
+                reply({ success: false, message: 'Authentication failed. User not found.' });
+              }
+
+              else if (user.password != request.payload.password) {
+                reply({ success: false, message: 'Authentication failed. Wrong password.' });
+              }
+              else {
+                reply({ success: true, message: 'Authentication succeeded. Welcome you!' });
+              }
+
+          });
+
+
+        }
+    });
+
+
     return next();
 };
 
