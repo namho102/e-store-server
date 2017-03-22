@@ -1,7 +1,8 @@
 'use strict';
 
 const Boom = require('boom');
-
+const jwt  = require('jsonwebtoken');
+var config = require('./../config');
 
 exports.register = function (server, options, next) {
 
@@ -45,7 +46,18 @@ exports.register = function (server, options, next) {
                 reply({ success: false, message: 'Authentication failed. Wrong password.' });
               }
               else {
-                reply({ success: true, message: 'Authentication succeeded. Welcome you!' });
+                // if user is found and password is right
+                // create a token
+                var token = jwt.sign(user, config.secret, {
+                  expiresIn: 86400 // expires in 24 hours
+                });
+
+                // return the information including token as JSON
+                reply({
+                  success: true,
+                  message: 'Enjoy your token!',
+                  token: token
+                });
               }
 
           });

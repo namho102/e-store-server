@@ -2,6 +2,8 @@
 
 const Hapi = require('hapi');
 const mongojs = require('mongojs');
+var config = require('./config'); // get our config file
+
 
 // Create a server with a host and port
 const server = new Hapi.Server();
@@ -11,7 +13,7 @@ server.connection({
 });
 
 //Connect to db
-server.app.db = mongojs('mongodb://heroku_pnc1crsd:i3rtrdok3604bn79t7uimr9hn6@ds049744.mongolab.com:49744/heroku_pnc1crsd', ['products']);
+server.app.db = mongojs(config.database);
 
 
 //Load plugins and start server
