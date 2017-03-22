@@ -23,6 +23,7 @@
     "boom": "^4.2.0",
     "express": "^4.14.1",
     "hapi": "^16.1.0",
+    "hapi-auth-jwt2": "^7.2.4",
     "jsonwebtoken": "^7.3.0",
     "mongojs": "^2.4.0"
   }
