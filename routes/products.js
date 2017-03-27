@@ -21,8 +21,7 @@ exports.register = function (server, options, next) {
                 reply(docs);
             });
 
-        },
-
+        }
     });
 
     server.route({
