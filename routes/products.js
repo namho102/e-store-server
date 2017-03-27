@@ -24,15 +24,17 @@ exports.register = function (server, options, next) {
         }
     });
 
+
+
     server.route({
         method: 'GET',
         path: '/products/{id}',
         handler: function (request, reply) {
 
             db.products.findOne({
-                _id: request.params.id
+                'id': +request.params.id
             }, (err, doc) => {
-
+                console.log(doc);
                 if (err) {
                     return reply(Boom.wrap(err, 'Internal MongoDB error'));
                 }
@@ -47,6 +49,31 @@ exports.register = function (server, options, next) {
         }
 
      });
+
+
+     server.route({
+        method: 'DELETE',
+        path: '/products/{id}',
+        handler: function (request, reply) {
+
+            db.products.remove({
+                'id': +request.params.id
+            }, function (err, result) {
+                if (err) {
+                    return reply(Boom.wrap(err, 'Internal MongoDB error'));
+                }
+
+                if (result.n === 0) {
+                    return reply(Boom.notFound());
+                }
+
+                reply().code(204);
+            });
+        },
+        config: {
+            auth: 'jwt'
+        }
+      });
 
 
 
