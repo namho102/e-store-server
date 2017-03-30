@@ -50,7 +50,7 @@ exports.register = function (server, options, next) {
         handler: function (request, reply) {
 
             db.products.findOne({
-                'id': +request.params.id
+                'product_id': request.params.id
             }, (err, doc) => {
                 console.log(doc);
                 if (err) {
@@ -75,7 +75,7 @@ exports.register = function (server, options, next) {
         handler: function (request, reply) {
 
             db.products.remove({
-                'id': +request.params.id
+                'product_id': request.params.id
             }, function (err, result) {
                 if (err) {
                     return reply(Boom.wrap(err, 'Internal MongoDB error'));
