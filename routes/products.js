@@ -24,6 +24,24 @@ exports.register = function (server, options, next) {
         }
     });
 
+    server.route({
+        method: 'POST',
+        path: '/products',
+        handler: function (request, reply) {
+            var product = request.payload
+
+            db.products.insert(product, (err, doc) => {
+                if (err) {
+                    return reply(Boom.wrap(err, 'Internal MongoDB error'));
+                }
+
+                reply("Insert successfully")
+            });
+
+        }
+    });
+
+
 
 
     server.route({
@@ -70,9 +88,9 @@ exports.register = function (server, options, next) {
                 reply().code(204);
             });
         },
-        config: {
-            auth: 'jwt'
-        }
+        // config: {
+        //     auth: 'jwt'
+        // }
       });
 
 
