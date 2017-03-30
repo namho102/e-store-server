@@ -42,8 +42,6 @@ exports.register = function (server, options, next) {
     });
 
 
-
-
     server.route({
         method: 'GET',
         path: '/products/{id}',
@@ -67,6 +65,57 @@ exports.register = function (server, options, next) {
         }
 
      });
+
+    server.route({
+        method: 'PUT',
+        path: '/products/{id}',
+        handler: function (request, reply) {
+
+            db.products.update({
+                'product_id': request.params.id
+            }, {
+                $set: request.payload
+            }, (err, doc) => {
+
+                if (err) {
+                    return reply(Boom.wrap(err, 'Internal MongoDB error'));
+                }
+
+                if (!doc) {
+                    return reply(Boom.notFound());
+                }
+
+                reply(doc);
+            });
+
+        }
+
+     });
+
+
+     server.route({
+         method: 'POST',
+         path: '/products/{id}',
+         handler: function (request, reply) {
+
+             db.products.update({
+                 'product_id': request.params.id
+             }, (err, doc) => {
+                 console.log(doc);
+                 if (err) {
+                     return reply(Boom.wrap(err, 'Internal MongoDB error'));
+                 }
+
+                 if (!doc) {
+                     return reply(Boom.notFound());
+                 }
+
+                 reply(doc);
+             });
+
+         }
+
+      });
 
 
      server.route({
