@@ -2,7 +2,8 @@
 
 const Boom = require('boom');
 const jwt = require('jsonwebtoken');
-var config = require('./../config');
+const config = require('./../config');
+
 
 exports.register = function(server, options, next) {
 
@@ -72,49 +73,59 @@ exports.register = function(server, options, next) {
   });
 
 
+  var cookie_options = {
+    ttl: 365 * 24 * 60 * 60 * 1000, // expires a year from today
+    encoding: 'none',    // we already used JWT to encode
+    isSecure: true,      // warm & fuzzy feelings
+    isHttpOnly: true,    // prevent client alteration
+    clearInvalid: false, // remove invalid cookies
+    strictHeader: true   // don't allow violations of RFC 6265
+  }
 
   server.route({
-    method: 'POST',
-    path: '/authenticate',
-    handler: function(request, reply) {
-      db.users.findOne({
-        username: request.payload.name,
-      }, (err, user) => {
+      method: 'POST',
+      path: '/authenticate',
+      handler: function(request, reply) {
+        db.users.findOne({
+          email: request.payload.email,
+        }, (err, user) => {
 
-        if (err) {
-          return reply(Boom.wrap(err, 'Internal MongoDB error'));
-        }
+          if (err) {
+            return reply(Boom.wrap(err, 'Internal MongoDB error'));
+          }
 
-        if (!user) {
-          reply({
-            success: false,
-            message: 'Authentication failed. User not found.'
-          });
-        } else if (user.password != request.payload.password) {
-          reply({
-            success: false,
-            message: 'Authentication failed. Wrong password.'
-          });
-        } else {
-          // if user is found and password is right
-          // create a token
-          var token = jwt.sign(user, config.secret, {
-            expiresIn: 86400 // expires in 24 hours
-          });
+          if (!user) {
+            reply({
+              success: false,
+              message: 'Authentication failed. User not found.'
+            });
+          } else if (user.password != request.payload.password) {
+            reply({
+              success: false,
+              message: 'Authentication failed. Wrong password.'
+            });
+          } else {
+            // if user is found and password is right
+            // create a token
+            var token = jwt.sign(user, config.secret, {
+              expiresIn: 86400 // expires in 24 hours
+            });
 
-          // return the information including token as JSON
-          reply({
-            success: true,
-            message: 'Enjoy your token!',
-            token: token
-          });
-        }
+            // return the information including token as JSON
+            reply({
+              success: true,
+              message: 'Enjoy your token!',
+              token: token
+            }).state("token", token, cookie_options)
+          }
 
-      });
+        });
 
 
+      }
     }
-  });
+
+  );
 
 
   return next();

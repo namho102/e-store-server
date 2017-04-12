@@ -23,14 +23,13 @@ var validate = function (decoded, request, callback) {
     return callback(null, false);
 };
 
-
-
 //Load plugins and start server
 server.register([
     require('hapi-auth-jwt2'),
     require('./routes/authorization'),
     require('./routes/products'),
-    require('./routes/users')
+    require('./routes/users'),
+    require('./routes/orders')
 ], (err) => {
 
     if (err) {
