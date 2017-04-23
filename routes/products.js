@@ -25,6 +25,25 @@ exports.register = function(server, options, next) {
   });
 
   server.route({
+    method: 'GET',
+    path: '/search/{query}',
+    handler: function(request, reply) {
+      let regex = {$regex : ".*" + request.params.query + ".*", $options: 'i'}   
+      db.products.find({
+        'name': regex
+      }, (err, docs) => {
+
+        if (err) {
+          return reply(Boom.wrap(err, 'Internal MongoDB error'));
+        }
+
+        reply(docs);
+      });
+
+    }
+  });
+
+  server.route({
     method: 'POST',
     path: '/products',
     handler: function(request, reply) {
