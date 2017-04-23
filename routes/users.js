@@ -72,14 +72,55 @@ exports.register = function(server, options, next) {
     }
   });
 
+  server.route({
+    method: 'POST',
+    path: '/users',
+    handler: function(request, reply) {
+      var newUser = request.payload
+      db.users.findOne({
+        email: newUser.email
+      }, (err, user) => {
+
+        if (err) {
+          return reply(Boom.wrap(err, 'Internal MongoDB error'));
+        }
+
+        if (user) {
+          reply({
+            success: false,
+            message: 'The email address is already taken'
+          });
+        } else {
+          db.users.insert(newUser, (err, doc) => {
+            if (err) {
+              return reply(Boom.wrap(err, 'Internal MongoDB error'));
+            }
+
+            var token = jwt.sign(newUser, config.secret, {
+              expiresIn: 86400 // expires in 24 hours
+            });
+
+            // return the information including token as JSON
+            reply({
+              success: true,
+              message: 'Enjoy your token!',
+              token: token
+            })
+
+          });
+
+        }
+      });
+    }
+  });
 
   var cookie_options = {
     ttl: 365 * 24 * 60 * 60 * 1000, // expires a year from today
-    encoding: 'none',    // we already used JWT to encode
-    isSecure: true,      // warm & fuzzy feelings
-    isHttpOnly: true,    // prevent client alteration
+    encoding: 'none', // we already used JWT to encode
+    isSecure: true, // warm & fuzzy feelings
+    isHttpOnly: true, // prevent client alteration
     clearInvalid: false, // remove invalid cookies
-    strictHeader: true   // don't allow violations of RFC 6265
+    strictHeader: true // don't allow violations of RFC 6265
   }
 
   server.route({
@@ -116,7 +157,7 @@ exports.register = function(server, options, next) {
               success: true,
               message: 'Enjoy your token!',
               token: token
-            }).state("token", token, cookie_options)
+            })
           }
 
         });

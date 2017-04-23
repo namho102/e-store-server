@@ -29,7 +29,7 @@ exports.register = function(server, options, next) {
             db.orders.findOne({
                 'order_id': request.params.id
             }, (err, doc) => {
-                console.log(doc);
+                // console.log(doc);
                 if (err) {
                     return reply(Boom.wrap(err, 'Internal MongoDB error'));
                 }
@@ -44,7 +44,7 @@ exports.register = function(server, options, next) {
 
     //update order
     server.route({
-        method: 'PUT',
+        method: 'POST',
         path: '/orders/{id}',
         handler: function(request, reply) {
 

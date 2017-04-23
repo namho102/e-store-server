@@ -19,7 +19,6 @@
   },
   "homepage": "https://github.com/namho102/e-store-server#readme",
   "dependencies": {
-    "axios": "^0.15.3",
     "boom": "^4.2.0",
     "hapi": "^16.1.0",
     "hapi-auth-jwt2": "^7.2.4",

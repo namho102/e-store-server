@@ -29,7 +29,8 @@ server.register([
     require('./routes/authorization'),
     require('./routes/products'),
     require('./routes/users'),
-    require('./routes/orders')
+    require('./routes/orders'),
+    require('./routes/carts')
 ], (err) => {
 
     if (err) {
